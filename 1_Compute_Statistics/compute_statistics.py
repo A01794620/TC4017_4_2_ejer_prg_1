@@ -1,12 +1,12 @@
 """
 Program #1. Compute Statistics.
 """
-
+import os
 import sys
 import math
 import time
 import errno
-
+from pathlib import Path
 
 # Class: Pruebas de Software y Aseguramiento de la Calidad (TC4017)
 # Programming Individual Exercise: 4.2.1 - Error Analysis using Pylint – PEP 8
@@ -40,6 +40,26 @@ import errno
 NA = "n/a"
 ZERO_WHEN_NULL = 0.0
 RESOURCE_PATH = "P1\\"
+RESULT_PATH = "RESULTS\\"
+OUTPUT_FILE = "StatisticsResults.txt"
+
+def get_next_file_name_path(file_path_):
+    """
+    Calculates the next valid file path to be saved.
+
+    Args:
+        file_path_ (string): The original file path to be used a reference in the
+        new path creation.
+,
+    Returns:
+        next valid path (string): It is a new folder/file to be created on the local system.
+    """
+
+    current_utc_seconds = time.time()
+    current_utc_seconds = str(current_utc_seconds).replace(".", "_")
+    plain_filename = Path(file_path_).stem
+    plain_filename = RESULT_PATH + plain_filename + "\\" + current_utc_seconds + "\\" + OUTPUT_FILE
+    return Path(plain_filename)
 
 def standard_deviation(number_list_):
     """
@@ -129,8 +149,6 @@ def median(number_list_):
     for number in number_list_:
         if not math.isnan(number):
             median_list.append(number)
-        else:
-            print("Horseman...")
 
     median_list.sort()
 
@@ -227,54 +245,94 @@ def read_from_file(file_path_):
         return source_file_lines
 
 
-def print_results(number_list_):
+def print_results(number_list_,file_path_, init_time_, disk_safe=True):
     """
     Print the computations results.
 
     Args:
         number_list_ (float[]): The source list of numbers to be used as
         the print raw material.
+        file_path_ (string): Original source file location.
+        disk_safe (bool): Flag to either save or not the results in the local disk.
+        init_time_ (float): Initial registered time.
 
     Returns:
         void: System print by console.
     """
+
     length = len(number_list_)
     head_ = "=-" * 20
+    execution_time = get_execution_time(init_time)
+
     results_to_print = f"{head_}\n" \
                        f"Count: {length}\n" \
                        f"Mean: {mean(number_list_)}\n" \
                        f"Median: {median(number_list_)}\n" \
                        f"Mode: {mode(number_list_)}\n" \
-                       f"Standard Deviation: {standard_deviation(number_list_)}\n" \
+                       f"SD: {standard_deviation(number_list_)}\n" \
                        f"Variance: {variance(number_list_)}\n" \
+                       f"Elapsed Execution Time: {execution_time} seconds\n" \
                        f"{head_}\n"
+
+    if disk_safe:
+        file_path_to_write = get_next_file_name_path(file_path_)
+        file_path_to_write.parent.mkdir(parents=True, exist_ok=True)
+        file_path_to_write.write_text(results_to_print)
+
+
+        ##with open(file_path_to_write, 'w') as file:
+        #    file_path_to_write.parent.mkdir(parents=True, exist_ok=True)
+        #    file_path_to_write.write(results_to_print)
+        #try:
+        #    os.mkdir(file_path_to_write)
+        #    print(f"Directory '{file_path_to_write}' created.")
+        #except FileExistsError:
+        #    print(f"Directory '{file_path_to_write}' already exists.")
+        #except FileNotFoundError:
+        #    print(f"Parent directory does not exist.")
+
+        print(f"Results storage in '{file_path_to_write}'")
 
     print(results_to_print)
 
 def print_help():
+    """
+    Print help instructions to help the user on the right program usage.
+
+    Args:
+        no arguments.
+
+    Returns:
+        void: System print by console.
+    """
     head_ = "=-=" * 30
     results_to_print = f"{head_}\n" \
-                       f"This program requires one parameter indicating the file to be processed.\n" \
-                       f"Additional parameters will be ignored.\n" \
+                       f"This program requires one parameter indicating the file to be " \
+                       f"processed.\nAdditional parameters will be ignored.\n" \
                        f"Invocation example:\n\tpython compute_statistics.py fileWithData.txt\n" \
                        f"{head_}\n"
 
     print(results_to_print)
 
+def get_time():
+    return time.perf_counter()
+
+def get_execution_time(init):
+    return get_time() - init
+
 
 # Main Execution Point
 if __name__ == '__main__':
-    start_time = time.perf_counter()
+    init_time = get_time()
 
     if len(sys.argv) > 1:
+        if len(sys.argv) > 2:
+            print("Only the first argument is required. Extra arguments will be ignored.")
         file_to_proces = sys.argv[1]
         file_lines = read_from_file(f"{RESOURCE_PATH}{file_to_proces}")
         number_list = file_lines_to_float(file_lines, True)
-        if len(number_list)>=1:
-            print_results(number_list)
-    else:
-        print_help()
 
-    end_time = time.perf_counter()
-    execution_time = end_time - start_time
-    print(f"Execution time: {execution_time} seconds")
+        if len(number_list)>=1:
+            print_results(number_list,f"{RESOURCE_PATH}{file_to_proces}", init_time, True)
+        else:
+            print_help()
