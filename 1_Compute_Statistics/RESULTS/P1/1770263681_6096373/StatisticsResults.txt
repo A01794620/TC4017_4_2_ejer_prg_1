@@ -5,5 +5,5 @@ Median: 239.0
 Mode: 393.0
 SD: 145.21250410426077
 Variance: 21086.671348229953
-Elapsed Execution Time: 0.0004913000157102942 seconds
+Elapsed Execution Time: 0.0004724999889731407
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
