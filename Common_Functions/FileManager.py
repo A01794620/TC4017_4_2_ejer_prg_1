@@ -1,14 +1,30 @@
-# List of Global Settings
+"""
+Program #1. Compute Statistics.
+"""
 
-# FileManager:
+#import sys
 import errno
 from pathlib import Path
 
-from Common_Functions.GlobalSettings import GlobalSettings
-from Common_Functions.TimeManager import TimeManager
+#_parent_dir = Path(__file__).parent.parent.resolve()
+#sys.path.insert(0, str(_parent_dir))
+#from common_functions.GlobalSettings import GlobalSettings # noqa pylint: disable=wrong-import-position, import-error
+#from common_functions.TimeManager import TimeManager # noqa pylint: disable=wrong-import-position, import-error
+#from common_functions.PrinterHelper import PrinterHelp # noqa pylint: disable=wrong-import-position, import-error
+# import TimeManager as TimeM
+#import GlobalSettings as CommonFxs
 
+from common_functions.GlobalSettings import GlobalSettings
+from common_functions.TimeManager import TimeManager
+from common_functions.PrinterHelper import PrinterHelper
+
+from colorama import init, Fore
+init(autoreset=True)
 
 class FileManager:
+    """
+    Program #1. Compute Statistics.
+    """
 
     @staticmethod
     def read_from_file(file_path_):
@@ -30,31 +46,46 @@ class FileManager:
 
             return source_file_lines
         except EnvironmentError as err:
+
             if err.errno == errno.ENOENT:
-                print(
-                    f"File not found Exception when trying to load the file '{file_path_}'"
-                    ".\nDouble Check the file path and try again.")
+                error_to_print = ("File not found Exception when trying to load the file: '" +
+                                  file_path_ + "'.\nDouble Check the file path and try again.")
             else:
-                print(
-                    f"There is a system problem to read the file '{file_path_}'."
-                    "\nDouble Check the file path and try again.")
+                error_to_print = ("There is a system problem to read the file:'" +
+                                  file_path_ + "'\nDouble Check the file path and try again.")
+
+            PrinterHelper.print_error(error_to_print)
+
             return source_file_lines
 
     @staticmethod
-    def write_to_file(exercise_id_, results_to_print_):
-        head_ = "=-" * 20
-        results_to_print = (head_ + "\n" + results_to_print_ + head_ + "\n")
+    def write_to_file(exercise_id_, file_source_name, results_to_print_):
+        """
+        Calculates the next valid file path to be saved.
+
+            Args:
+                exercise_id_ (int): The exersice ID as reference in the new path creation.
+                file_source_name (string): Original file name reference.
+                results_to_print_ (string): Preformatted text to be printed.
+
+            Returns:
+                next valid path (string): It is a new folder/file to be created on the local system.
+        """
+        head_ = "==" * 40
+        results_to_print = head_ + "\n" + results_to_print_ + "\n" + head_ + "\n"
 
         try:
-            file_path_to_write = FileManager.get_next_file_name_path(exercise_id_)
+            file_path_to_write = FileManager.get_next_file_name_path(exercise_id_, file_source_name)
             file_path_to_write.parent.mkdir(parents=True, exist_ok=True)
-            file_path_to_write.write_text(results_to_print)
-            print(f"Results storage in '{file_path_to_write}'")
+            file_path_to_write.write_text(results_to_print, encoding="utf-8")
+            print(f"Results stored in:")
+            print(f"{Fore.CYAN}'{file_path_to_write}'")
+
         except FileNotFoundError as e:
             print(f"FileNotFoundError:\n{e}")
 
     @staticmethod
-    def get_next_file_name_path(exercise_id_):
+    def get_next_file_name_path(exercise_id_, file_source_name):
         """
         Calculates the next valid file path to be saved.
 
@@ -64,10 +95,11 @@ class FileManager:
             Returns:
                 next valid path (string): It is a new folder/file to be created on the local system.
         """
+
         current_utc_seconds = TimeManager.get_utc()
         current_utc_seconds = str(current_utc_seconds).replace(".", "_")
+        plain_filename = (GlobalSettings.RESULT_PATH + GlobalSettings.RESOURCE_PATH +
+                          str(exercise_id_) + "\\" + file_source_name + "\\" + current_utc_seconds + "\\" +
+                          GlobalSettings.OUTPUT_FILE)
 
-        #plain_filename = Path(file_path_).stem
-
-        plain_filename = GlobalSettings.RESULT_PATH + GlobalSettings.RESOURCE_PATH + str(exercise_id_) + "\\" + current_utc_seconds + "\\" + GlobalSettings.OUTPUT_FILE
         return Path(plain_filename)

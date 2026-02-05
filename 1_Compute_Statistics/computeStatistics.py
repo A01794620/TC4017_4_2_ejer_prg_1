@@ -1,47 +1,57 @@
 """
-Program #1. Compute Statistics.
+ Program #1. Compute Statistics. Programming Individual Exercise: 4.2.1
+ @Motive . Error Analysis using Pylint – PEP 8
+ @author . Ronald Sandí Quesada
+ @Student-ID . A01794620
+ @email . A01794620@tec.mx
+ @MNA Class . Pruebas de Software y Aseguramiento de la Calidad (TC4017)
+ @Professor . PhD Gerardo Padilla Zárate
+ @Professor Evaluator and Tutor . PhD Daniel Flores Araiza
+ @Period . I Trimester 2026
+ @Date . 01/02/2026
+ @References: All the algorithm were methodologically based on the material of
+              Bruce, Bruce & Gedeck (2022, pp. 8 -15).
+ @APA:  - Bruce, P., Bruce, A. & Gedeck, P. (2022). Estadística Práctica para
+        Ciencia de Datos con R y Python. (2nd. ed.) (F. Martínez Trans.). Marcombo.
 """
+
+# External Libraries
 import os
 import sys
 import math
 from pathlib import Path
 
+#import common_functions.PrinterHelper
+
+# Project Common Classes
 _parent_dir = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(_parent_dir))
 
-import Common_Functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
 
+import common_functions.TimeManager as TimeM
+import common_functions.FileManager as FileM
 
-# Class: Pruebas de Software y Aseguramiento de la Calidad (TC4017)
-# Programming Individual Exercise: 4.2.1 - Error Analysis using Pylint – PEP 8
-# Professor: PhD Gerardo Padilla Zárate
-# Tutor/Evaluator Professor: PhD Daniel Flores Araiza
-# Student / Investigator: Ronald Sandí Quesada – (A01794620)
-# I Trimester – 2026
-# Date: 01/02/2026
-
-
-#Requirements:
-# Req 1. The program shall be invoked from a command line.
-#        The program shall receive a file as parameter.
-#        The file will contain a list of items (presumable numbers).
-# Req 2. The program shall compute all descriptive statistics from a file containing numbers.
-#        The results shall be print on a screen and on a file named StatisticsResults.txt.
-#        All computation MUST be calculated using the basic algorithms, not functions or libraries.
-#        The descriptive statistics are mean, median, mode, standard deviation, and variance.
-# Req 3. The program shall include the mechanism to handle invalid data in the file.
-#        Errors should be displayed in the console and the execution must continue.
-# Req 4. The name of the program shall be compute_statistics.py
-# Req 5. The minimum format to invoke the program shall be as follows:
-#        python compute_statistics.py fileWithData.txt
-# Req 6. The program shall manage files having from hundreds of items to thousands of items.
-# Req 7. The program should include at the end of the execution the time elapsed
-#        for the execution and calculus of the data. This number shall be included in the
-#        results file and on the screen.
-# Req 8. Be compliant with PEP8.
+# Requirements:
+# Req 1. . The program shall be invoked from a command line.
+#        . The program shall receive a file as parameter.
+#        . The file will contain a list of items (presumable numbers).
+# Req 2. . The program shall compute all descriptive statistics from a file containing numbers.
+#        . The results shall be print on a screen and on a file named StatisticsResults.txt.
+#        . All computation MUST be calculated using the basic algorithms, not functions or
+#          libraries.
+#        . The descriptive statistics are mean, median, mode, standard deviation, and variance.
+# Req 3. . The program shall include the mechanism to handle invalid data in the file.
+#        . Errors should be displayed in the console and the execution must continue.
+# Req 4. . The name of the program shall be computeStatistics.py
+# Req 5. . The minimum format to invoke the program shall be as follows:
+#        . python computeStatistics.py fileWithData.txt
+# Req 6. . The program shall manage files having from hundreds of items to thousands of items.
+# Req 7. . The program should include at the end of the execution the time elapsed
+#          for the execution and calculus of the data. This number shall be included in the
+#          results file and on the screen.
+# Req 8. . Be compliant with PEP8.
 
 def standard_deviation(number_list_):
     """
@@ -185,20 +195,28 @@ def file_lines_to_float(file_lines_, include_nil_counts=True):
         float (Float[]): Numbers converted as a List.
     """
     number_list_ = []
+    error_tracker = ""
+
     for number_in_line in file_lines_:
         try:
             number_from_string = float(number_in_line)
             number_list_.append(number_from_string)
         except ValueError as e:
-            print(f"Error: Unable to convert '{number_in_line}' to a float. Details: {e}")
+            #PrintHelp.PrinterHelper.print_error(f"Error: Unable to convert '{number_in_line}' to a float. De
+            # tails: {e}")
+            error_tracker = error_tracker + "Error: Unable to convert '" + str(number_in_line) + "' to a float. Details: " + str(e) + "\n"
 
             if include_nil_counts:
                 number_list_.append(float('nan'))
 
+    if len(error_tracker) > 0:
+        PrintHelp.PrinterHelper.print_error(error_tracker)
+        #print(error_tracker)
+
     return number_list_
 
 
-def print_results(exercise_id_, number_list_, init_time_, disk_safe=True):
+def print_results(exercise_id_, number_list_, init_time_, file_source_name, disk_safe=True):
     """
     Print the computations results.
 
@@ -207,6 +225,7 @@ def print_results(exercise_id_, number_list_, init_time_, disk_safe=True):
         number_list_ (float[]): The source list of numbers to be used as
         the print raw material.
         init_time_ (float): Initial registered time.
+        file_source_name (string): Original file name reference.
         disk_safe (bool): Flag to either save or not the results in the local disk.
 
     Returns:
@@ -221,12 +240,12 @@ def print_results(exercise_id_, number_list_, init_time_, disk_safe=True):
                        f"Mode: {mode(number_list_)}\n" \
                        f"SD: {standard_deviation(number_list_)}\n" \
                        f"Variance: {variance(number_list_)}\n" \
-                       f"Elapsed Execution Time: {execution_time}\n"
+                       f"Elapsed Execution Time: {execution_time}"
 
     PrintHelp.PrinterHelper.print_results(results_to_print)
 
     if disk_safe:
-        FileM.FileManager.write_to_file(exercise_id_, results_to_print)
+        FileM.FileManager.write_to_file(exercise_id_,file_source_name, results_to_print)
 
 
 # Main Execution Point
@@ -239,13 +258,14 @@ if __name__ == '__main__':
         if len(sys.argv) > 2:
             print("Only the first argument is required. Extra arguments will be ignored.")
         file_to_proces = sys.argv[1]
-        # file_lines = read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}{file_to_proces}")
+
         file_lines = FileM.FileManager.read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
                                                       f"{EXERCISE_ID}\\{file_to_proces}")
-        #print(file_lines)
+
         number_list = file_lines_to_float(file_lines, True)
 
         if len(number_list)>=1:
-            print_results(EXERCISE_ID, number_list, init_time, True)
+            file_source_name = file_to_proces.replace(".", "_")
+            print_results(EXERCISE_ID, number_list, init_time, file_source_name, True)
     else:
         PrintHelp.PrinterHelper.print_help(os.path.abspath(__file__))

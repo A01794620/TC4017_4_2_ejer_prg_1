@@ -8,10 +8,10 @@ import os
 _parent_dir = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(_parent_dir))
 
-import Common_Functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
-import Common_Functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
+import common_functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
 
 
 # Class: Pruebas de Software y Aseguramiento de la Calidad (TC4017)
