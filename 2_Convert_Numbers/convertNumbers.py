@@ -2,8 +2,19 @@
 
 # Requirements:
 
-import time
-import errno
+import sys
+from pathlib import Path
+import os
+import math
+
+_parent_dir = Path(__file__).parent.parent.resolve()
+sys.path.insert(0, str(_parent_dir))
+
+import Common_Functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
+
 
 WORD_LEN_DEFAULT = 32
 RESOURCE_PATH = "P2\\"
@@ -82,39 +93,34 @@ def decimal_int_to_binary(dec_int_number, word_length=WORD_LEN_DEFAULT, pad_lead
     return bit_carrier_reverse
 
 
-def file_lines_to_binary(file_lines_):
-    number_list_ = []
-    for number_in_line in file_lines_:
-        print(number_in_line)
+# def file_lines_to_binary(file_lines_):
+#     number_list_ = []
+#     for number_in_line in file_lines_:
+#         print(number_in_line)
+#
+#         #try:
+#         #    number_from_string = float(number_in_line)
+#         #    number_list_.append(number_from_string)
+#         # except ValueError as e:
+#         #     print(f"Error: Unable to convert '{number_in_line}' to a float. Details: {e}")
+#         # number_list_.append(ZERO_WHEN_NULL)
+#     return number_list_
 
-        #try:
-        #    number_from_string = float(number_in_line)
-        #    number_list_.append(number_from_string)
-        # except ValueError as e:
-        #     print(f"Error: Unable to convert '{number_in_line}' to a float. Details: {e}")
-        # number_list_.append(ZERO_WHEN_NULL)
-    return number_list_
 
-def read_from_file(file_path):
-    source_file_lines = []
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                source_file_lines.append(line.strip())
-        return source_file_lines
-    except EnvironmentError as err:
-        if err.errno == errno.ENOENT:
-            print(
-                f"File not found Exception when trying to load the file '{file_path}'.\nDouble Check the file path and try again.")
-        else:
-            print(
-                f"There is a system problem to read the file '{file_path}'.\nDouble Check the file path and try again.")
-        return source_file_lines
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return source_file_lines
+def file_lines_to_decimal_int(file_lines_, include_nil_counts=True):
+    """
+    Convert a String List to Decimal Integer.
+    The non-numeric values are not converted.
+    The flag included_nil_counts define either or not to include the NA item in the list.
 
-def file_lines_to_decimal_int(file_lines_):
+    Args:
+        file_lines_ (Sting[]): The source list of lines in the file as String List.
+        include_nil_counts (Boolean): Flag that defines either to include the NA item in the list.
+
+    Returns:
+        decimal integer (integer[]): Numbers converted as a List.
+    """
+
     number_list_ = []
     for number_in_line in file_lines_:
         try:
@@ -122,30 +128,62 @@ def file_lines_to_decimal_int(file_lines_):
             number_list_.append(number_from_string)
         except ValueError as e:
             print(f"Error: Unable to convert '{number_in_line}' to a decimal integer. Details: {e}")
-            # number_list_.append(ZERO_WHEN_NULL)
+            if include_nil_counts:
+                number_list_.append(float('nan'))
+
     return number_list_
 
-def print_results(dec_int_number_):
-    # head_ = "=-" * 20
-    bin_representation = decimal_int_to_binary(dec_int_number_)
-    hexa_representation = decimal_int_to_hexa(dec_int_number_)
 
-    results_to_print = f"> Decimal: {dec_int_number_}\t" \
-                       f"Binary: {bin_representation}\t" \
-                       f"Hexadecimal: {hexa_representation}"
+def print_results(exercise_id_, dec_int_number_, init_time_, disk_safe=True):
+    """
+    Print the computations results.
 
-    print(results_to_print)
+    Args:
+        exercise_id_ (int) : Exercise ID.
+        dec_int_number_ (float[]): The source list of numbers to be used as
+        the print raw material.
+        init_time_ (float): Initial registered time.
+        disk_safe (bool): Flag to either save or not the results in the local disk.
 
-# Press the green button in the gutter to run the script.
+    Returns:
+        void: System print by console.
+    """
+    results_to_print = ""
+
+    for item_id, dec_int_number_item_ in enumerate(dec_int_number_):
+        line_to_print = ""
+
+        if not math.isnan(dec_int_number_item_):
+            bin_representation = decimal_int_to_binary(dec_int_number_item_)
+            hexa_representation = decimal_int_to_hexa(dec_int_number_item_)
+            line_to_print = str(item_id) + "\t" + "Decimal:" + str(dec_int_number_item_) + "\t" + "Hexadecimal:\t" + hexa_representation + "\t" + "Binary:\t" + str(bin_representation) + "\n"
+        else:
+            line_to_print = str(item_id) + "\tDecimal:\tn/a\tHexadecimal:\t n/a\t\tBinary:\tn/a\n"
+
+        results_to_print = results_to_print + line_to_print
+
+    execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
+    PrintHelp.PrinterHelper.print_results(results_to_print)
+
+    if disk_safe:
+        FileM.FileManager.write_to_file(exercise_id_, results_to_print)
+
+
+# Main Execution Point
 if __name__ == '__main__':
-    numbers_container = []
-    start_time = time.perf_counter()
-    file_lines = read_from_file(f"{RESOURCE_PATH}TC4.txt")
-    number_list = file_lines_to_decimal_int(file_lines)
+    EXERCISE_ID = 2
+    init_time = TimeM.TimeManager.get_time()
 
-    for dec_int_number_item in number_list:
-        print_results(dec_int_number_item)
+    if len(sys.argv) > 1:
+        if len(sys.argv) > 2:
+            print("Only the first argument is required. Extra arguments will be ignored.")
 
-    end_time = time.perf_counter()
-    execution_time = end_time - start_time
-    print(f"Execution time: {execution_time} seconds")
+        file_to_proces = sys.argv[1]
+        file_lines = FileM.FileManager.read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
+                                                      f"{EXERCISE_ID}\\{file_to_proces}")
+        number_list = file_lines_to_decimal_int(file_lines)
+
+        if len(number_list) >= 1:
+            print_results(EXERCISE_ID, number_list, init_time, True)
+        else:
+            PrintHelp.PrinterHelper.print_help(os.path.abspath(__file__))
