@@ -43,7 +43,7 @@ class TimeManager:
         Returns:
             float: The elapsed time calculation result.
         """
-        return end - init
+        return end-init
 
     @staticmethod
     def get_utc():

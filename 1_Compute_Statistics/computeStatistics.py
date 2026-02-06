@@ -227,6 +227,7 @@ def print_results(exercise_id_, number_list_, init_time_, file_source_name_, dis
         void: System print by console.
     """
     length = len(number_list_)
+
     execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
 
     results_to_print = f"Count: {length}\n" \
@@ -234,14 +235,16 @@ def print_results(exercise_id_, number_list_, init_time_, file_source_name_, dis
                        f"Median: {median(number_list_)}\n" \
                        f"Mode: {mode(number_list_)}\n" \
                        f"SD: {standard_deviation(number_list_)}\n" \
-                       f"Variance: {variance(number_list_)}\n" \
-                       f"Elapsed Execution Time: {execution_time}"
-
-    PrintHelp.PrinterHelper.print_results(results_to_print)
+                       f"Variance: {variance(number_list_)}"
 
     if disk_safe:
-        FileM.FileManager.write_to_file(exercise_id_,file_source_name_, results_to_print)
+        results_to_save = results_to_print + f"\nElapsed Execution Time: {execution_time:.4f} seconds"
+        FileM.FileManager.write_to_file(exercise_id_,file_source_name_, results_to_save)
 
+    PrintHelp.PrinterHelper.print_results(results_to_print)
+    PrintHelp.PrinterHelper.print_time_stamp(execution_time, False)
+    final_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
+    PrintHelp.PrinterHelper.print_time_stamp(final_time)
 
 # Main Execution Point
 if __name__ == '__main__':

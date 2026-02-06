@@ -221,14 +221,14 @@ def print_results(exercise_id_, dec_int_number_, init_time_, file_source_name_, 
         results_to_print = results_to_print + line_to_print
 
     execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
-
-    results_to_print = results_to_print + "Elapsed Execution Time:\t" + str(execution_time)
-
+    results_to_print = results_to_print + f"Elapsed Execution Time:\t{execution_time:.4f} seconds"
     PrintHelp.PrinterHelper.print_results(results_to_print)
+    PrintHelp.PrinterHelper.print_time_stamp(init_time, True)
 
     if disk_safe:
         FileM.FileManager.write_to_file(exercise_id_,file_source_name_, results_to_print)
 
+    PrintHelp.PrinterHelper.print_time_stamp(init_time, False)
 
 # Main Execution Point
 if __name__ == '__main__':

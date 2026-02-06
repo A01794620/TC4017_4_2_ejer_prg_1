@@ -89,17 +89,17 @@ def print_results(exercise_id_, len_word_counter, word_counter_text, init_time_,
     Returns:
         void: System print by console.
     """
-    execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
+    # execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
 
-    results_to_print = (word_counter_text +
-                        "\n" +
-                        "Grand Total:\t" +  str(len_word_counter) + "\n" +
-                        "Elapsed Execution Time:\t" +  str(execution_time))
-
+    results_to_print = word_counter_text + "\nGrand Total:\t" +  str(len_word_counter)
     PrintHelp.PrinterHelper.print_results(results_to_print)
+    PrintHelp.PrinterHelper.print_time_stamp(init_time, True)
 
     if disk_safe:
         FileM.FileManager.write_to_file(exercise_id_, file_source_name_, results_to_print)
+
+    PrintHelp.PrinterHelper.print_time_stamp(init_time, False)
+
 
 # Main Execution Point
 if __name__ == '__main__':

@@ -10,7 +10,12 @@
  @Period . I Trimester 2026
  @Date
 """
+# External Libraries
+from colorama import init, Fore
+init(autoreset=True)
 
+# Project Common Classes
+from Common_Functions.TimeManager import TimeManager # noqa pylint: disable=wrong-import-position, import-error
 
 # External Libraries
 from colorama import init, Fore
@@ -78,3 +83,23 @@ class PrinterHelper:
         head_ = "==" * 40
         results_to_print = head_ + "\n" + results_to_print_ + "\n" + head_ + "\n"
         print(results_to_print)
+
+    @staticmethod
+    def print_time_stamp(execution_time, is_final_time_=True):
+        """
+        Print the execution time in the very last moment, after file is stored and
+        results on screen. This elapsed time is wide bigger than the calculation time
+        in the local machine.
+
+            Args:
+                execution_time (float): Execution time registered.
+                is_final_time_ (bool): Flag to either display final time or execution time.
+            Returns:
+                void: System print by console.
+        """
+
+
+        if is_final_time_:
+            print(f"{Fore.LIGHTWHITE_EX}Elapsed Time after saving file and listing on screen:{execution_time: .4f} seconds\n")
+        else:
+            print(f"{Fore.CYAN}Elapsed Execution Time:{execution_time: .4f} seconds\n")
