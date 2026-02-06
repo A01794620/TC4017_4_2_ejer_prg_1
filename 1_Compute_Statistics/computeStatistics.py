@@ -24,11 +24,11 @@ from pathlib import Path
 _parent_dir = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(_parent_dir))
 
-import common_functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
-import common_functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.PrinterHelper as PrintHelp # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.GlobalSettings as CommonFxs # noqa pylint: disable=wrong-import-position, import-error
 
-import common_functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
-import common_functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.TimeManager as TimeM # noqa pylint: disable=wrong-import-position, import-error
+import Common_Functions.FileManager as FileM # noqa pylint: disable=wrong-import-position, import-error
 
 # Requirements:
 # Req 1. . The program shall be invoked from a command line.
@@ -256,7 +256,7 @@ if __name__ == '__main__':
         file_to_proces = sys.argv[1]
 
         file_lines = FileM.FileManager.read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
-                                                      f"{EXERCISE_ID}\\{file_to_proces}")
+                                                      f"{EXERCISE_ID}\\{file_to_proces}", EXERCISE_ID)
 
         number_list = file_lines_to_float(file_lines, True)
 

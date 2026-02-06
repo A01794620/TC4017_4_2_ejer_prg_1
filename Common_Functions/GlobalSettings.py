@@ -1,11 +1,20 @@
 """
-Program #1. Compute Statistics.
+ Module. Global Settings Holder. Programming Individual Exercise: 4.2.1
+ @Motive . Error Analysis using Pylint – PEP 8
+ @author . Ronald Sandí Quesada
+ @Student-ID . A01794620
+ @email . A01794620@tec.mx
+ @MNA Class . Pruebas de Software y Aseguramiento de la Calidad (TC4017)
+ @Professor . PhD Gerardo Padilla Zárate
+ @Professor Evaluator and Tutor . PhD Daniel Flores Araiza
+ @Period . I Trimester 2026
+ @Date . 01/02/2026
 """
 
 
 class GlobalSettings:
     """
-    Program #1. Compute Statistics.
+    Global Settings. A placeholder for global settings space.
     """
 
     def __str__(self):
@@ -14,16 +23,17 @@ class GlobalSettings:
     @property
     def version(self):
         """
-        Read the context of a plain file.
+        Package version.
 
         Args:
-            file_path_ (strig): File path to be read.
+            (void): no arguments.
 
         Returns:
-            string[]: The content of the file in lines separation.
+            ver (string): Package version.
         """
         return self.VER
 
+    # GLobal settings to be used across all modules.
     VER = "1.0"
     WORD_LEN_DEFAULT = 32
     RESOURCE_PATH = "P"

@@ -1,18 +1,31 @@
 """
-Program #1. Compute Statistics.
+ Module. String screen printer helper. Programming Individual Exercise: 4.2.1
+ @Motive . Error Analysis using Pylint – PEP 8
+ @author . Ronald Sandí Quesada
+ @Student-ID . A01794620
+ @email . A01794620@tec.mx
+ @MNA Class . Pruebas de Software y Aseguramiento de la Calidad (TC4017)
+ @Professor . PhD Gerardo Padilla Zárate
+ @Professor Evaluator and Tutor . PhD Daniel Flores Araiza
+ @Period . I Trimester 2026
+ @Date
 """
-from colorama import init, Fore, Style
+
+
+# External Libraries
+from colorama import init, Fore
 init(autoreset=True)
 
 class PrinterHelper:
 
     """
-    Program #1. Compute Statistics.
+    String screen printer helper. It is a module who handles all related to screen printing.
     """
+
     @staticmethod
     def print_error(error_str):
         """
-        Print help instructions to help the user on the right program usage.
+        Print messages under error or exception fashion.
 
         Args:
             error_str (string): Original error text to print.
@@ -22,7 +35,8 @@ class PrinterHelper:
         """
         head_ = "==" * 40
         results_to_print = "\n" + head_ + "\n" + error_str + "\n" + head_ + "\n"
-        print(f"{Fore.RED}The following errors were found in the system execution:\n{error_str}")
+        print(f"{Fore.RED}The following errors were found in the system execution:"
+              f"\n{results_to_print}")
 
     @staticmethod
     def print_help(exec_id):
