@@ -33,3 +33,5 @@ class GlobalSettings:
     NA = "n/a"
     RESULT_PATH = "RESULTS\\"
     OUTPUT_FILE = "StatisticsResults.txt"
+    OUTPUT_FILE_CONVERSION = "ConvertionResults.txt"
+    OUTPUT_FILE_WORD_COUNT = "WordCountResults.txt"

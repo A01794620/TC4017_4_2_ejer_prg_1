@@ -44,7 +44,7 @@ class PrinterHelper:
                            f"Invocation example:\n  python '{exec_id}' 'fileWithData.txt'\n" \
                            f"{head_}\n"
 
-        print(results_to_print)
+        print(f"{Fore.RED}{results_to_print}")
 
     @staticmethod
     def print_results(results_to_print_):

@@ -1,23 +1,12 @@
 """
 Program #1. Compute Statistics.
 """
-
-#import sys
 import errno
 from pathlib import Path
-
-#_parent_dir = Path(__file__).parent.parent.resolve()
-#sys.path.insert(0, str(_parent_dir))
-#from common_functions.GlobalSettings import GlobalSettings # noqa pylint: disable=wrong-import-position, import-error
-#from common_functions.TimeManager import TimeManager # noqa pylint: disable=wrong-import-position, import-error
-#from common_functions.PrinterHelper import PrinterHelp # noqa pylint: disable=wrong-import-position, import-error
-# import TimeManager as TimeM
-#import GlobalSettings as CommonFxs
 
 from common_functions.GlobalSettings import GlobalSettings
 from common_functions.TimeManager import TimeManager
 from common_functions.PrinterHelper import PrinterHelper
-
 from colorama import init, Fore
 init(autoreset=True)
 
@@ -82,7 +71,8 @@ class FileManager:
             print(f"{Fore.CYAN}'{file_path_to_write}'")
 
         except FileNotFoundError as e:
-            print(f"FileNotFoundError:\n{e}")
+            error_to_print = f"FileNotFoundError: {e}"
+            PrinterHelper.print_error(error_to_print)
 
     @staticmethod
     def get_next_file_name_path(exercise_id_, file_source_name):
@@ -95,11 +85,17 @@ class FileManager:
             Returns:
                 next valid path (string): It is a new folder/file to be created on the local system.
         """
+        file_name_to_write = GlobalSettings.OUTPUT_FILE
+
+        if exercise_id_ == 2:
+            file_name_to_write = GlobalSettings.OUTPUT_FILE_CONVERSION
+        elif exercise_id_ == 3:
+            file_name_to_write = GlobalSettings.OUTPUT_FILE_WORD_COUNT
 
         current_utc_seconds = TimeManager.get_utc()
         current_utc_seconds = str(current_utc_seconds).replace(".", "_")
         plain_filename = (GlobalSettings.RESULT_PATH + GlobalSettings.RESOURCE_PATH +
                           str(exercise_id_) + "\\" + file_source_name + "\\" + current_utc_seconds + "\\" +
-                          GlobalSettings.OUTPUT_FILE)
+                          file_name_to_write)
 
         return Path(plain_filename)
