@@ -72,8 +72,9 @@ def count_words(file_lines_):
 
     return len(word_counter_sorted), word_counter_text
 
-
-def print_results(exercise_id_, len_word_counter, word_counter_text, init_time_, file_source_name_, disk_safe=True):
+# pylint: disable=R0913, R0917
+def print_results(exercise_id_, len_word_counter, word_counter_text, init_time_,
+                  file_source_name_, disk_safe=True):
     """
     Print the computations results.
 
@@ -89,16 +90,19 @@ def print_results(exercise_id_, len_word_counter, word_counter_text, init_time_,
     Returns:
         void: System print by console.
     """
-    # execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
+    execution_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
 
-    results_to_print = word_counter_text + "\nGrand Total:\t" +  str(len_word_counter)
+    results_to_print = word_counter_text + "Grand Total:\t" +  str(len_word_counter)
     PrintHelp.PrinterHelper.print_results(results_to_print)
-    PrintHelp.PrinterHelper.print_time_stamp(init_time, True)
+    PrintHelp.PrinterHelper.print_time_stamp(execution_time, False)
 
     if disk_safe:
-        FileM.FileManager.write_to_file(exercise_id_, file_source_name_, results_to_print)
+        results_to_save = (results_to_print +
+                           f"\nElapsed Execution Time: {execution_time:.4f} seconds")
+        FileM.FileManager.write_to_file(exercise_id_, file_source_name_, results_to_save)
 
-    PrintHelp.PrinterHelper.print_time_stamp(init_time, False)
+    final_time = TimeM.TimeManager.get_execution_time(init_time_, TimeM.TimeManager.get_time())
+    PrintHelp.PrinterHelper.print_time_stamp(final_time)
 
 
 # Main Execution Point
@@ -111,13 +115,15 @@ if __name__ == '__main__':
             print("Only the first argument is required. Extra arguments will be ignored.")
 
         file_to_proces = sys.argv[1]
-        file_lines = FileM.FileManager.read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
-                                                      f"{EXERCISE_ID}\\{file_to_proces}", EXERCISE_ID)
+        file_lines = FileM.FileManager.read_from_file(
+            f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
+            f"{EXERCISE_ID}\\{file_to_proces}", EXERCISE_ID)
 
         len_word_counter_ , word_counter_text_ = count_words(file_lines)
 
         if len_word_counter_ >= 1:
             file_source_name = file_to_proces.replace(".", "_")
-            print_results(EXERCISE_ID, len_word_counter_, word_counter_text_, init_time, file_source_name, True)
+            print_results(EXERCISE_ID, len_word_counter_, word_counter_text_, init_time,
+                          file_source_name, True)
     else:
         PrintHelp.PrinterHelper.print_help(os.path.abspath(__file__))

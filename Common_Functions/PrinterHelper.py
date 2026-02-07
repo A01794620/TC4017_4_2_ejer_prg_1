@@ -14,12 +14,6 @@
 from colorama import init, Fore
 init(autoreset=True)
 
-# Project Common Classes
-from Common_Functions.TimeManager import TimeManager # noqa pylint: disable=wrong-import-position, import-error
-
-# External Libraries
-from colorama import init, Fore
-init(autoreset=True)
 
 class PrinterHelper:
 
@@ -100,6 +94,7 @@ class PrinterHelper:
 
 
         if is_final_time_:
-            print(f"{Fore.LIGHTWHITE_EX}Elapsed Time after saving file and listing on screen:{execution_time: .4f} seconds\n")
+            print(f"{Fore.LIGHTWHITE_EX}Elapsed Time after saving file and listing on screen:"
+                  f"{execution_time: .4f} seconds\n")
         else:
             print(f"{Fore.CYAN}Elapsed Execution Time:{execution_time: .4f} seconds\n")

@@ -185,7 +185,8 @@ def file_lines_to_float(file_lines_, include_nil_counts=True):
 
     Args:
         file_lines_ (Sting[]): The source list of lines in the file as String List.
-        include_nil_counts (Boolean): Flag that defines either to include or not the N/A items in the list.
+        include_nil_counts (Boolean): Flag that defines either to include or not the N/A
+        items in the list.
 
     Returns:
         float (Float[]): Numbers converted as a List.
@@ -238,7 +239,8 @@ def print_results(exercise_id_, number_list_, init_time_, file_source_name_, dis
                        f"Variance: {variance(number_list_)}"
 
     if disk_safe:
-        results_to_save = results_to_print + f"\nElapsed Execution Time: {execution_time:.4f} seconds"
+        results_to_save = (results_to_print +
+                           f"\nElapsed Execution Time: {execution_time:.4f} seconds")
         FileM.FileManager.write_to_file(exercise_id_,file_source_name_, results_to_save)
 
     PrintHelp.PrinterHelper.print_results(results_to_print)
@@ -258,8 +260,9 @@ if __name__ == '__main__':
 
         file_to_proces = sys.argv[1]
 
-        file_lines = FileM.FileManager.read_from_file(f"{CommonFxs.GlobalSettings.RESOURCE_PATH}"
-                                                      f"{EXERCISE_ID}\\{file_to_proces}", EXERCISE_ID)
+        file_lines = FileM.FileManager.read_from_file(
+            f"{CommonFxs.GlobalSettings.RESOURCE_PATH}{EXERCISE_ID}\\{file_to_proces}",
+            EXERCISE_ID)
 
         number_list = file_lines_to_float(file_lines, True)
 
